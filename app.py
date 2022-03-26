@@ -17,8 +17,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 ## Wrangle the data
 ####################################################################################################################
 
-data_path = 'food_recipes.csv'
-recipe_data = pd.read_csv("food_recipes.csv")
+data_path = 'https://raw.githubusercontent.com/fpontejos/ifood-team13/main/data/food_recipes.csv'
+data_path2 = 'data/food_recipes.csv'
+recipe_data = pd.read_csv(data_path)
 
 
 recipe_data.drop(columns=['url', 'record_health', 'vote_count', 'author'], inplace=True)
@@ -46,7 +47,6 @@ ingredients_index = ingredients_index.explode('ingredients').reset_index(drop=Tr
 unique_ingredients = pd.DataFrame(ingredients_index['ingredients'].unique().tolist(), 
                                   columns=['ingredients'])
 
-print(ingredients_index.head(2))
 ######################################################Functions##############################################################
 
 
@@ -64,7 +64,7 @@ def get_top_similar(simx, k, i, df):
     sorted_similar = sorted(similar_recipes, key=lambda x:x[1], reverse=True)
     top_k = sorted_similar[1:k+1]
     
-    
+
     top_k_df = pd.DataFrame(columns=df.columns)
     top_k_scores = []
     top_k_index = []
@@ -75,6 +75,7 @@ def get_top_similar(simx, k, i, df):
 
     top_k_df['Score'] = top_k_scores
     top_k_df['id'] = top_k_index
+    top_k_df['Score'] = round(top_k_df['Score']*100,2)
 
     return top_k_df
     
@@ -89,7 +90,6 @@ recipe_data["combined_features"] = recipe_data.apply(combined_features, axis =1)
 
 cv = CountVectorizer()
 count_matrix = cv.fit_transform(recipe_data["combined_features"])
-#print("Count Matrix:", count_matrix.toarray())
 
 cosine_sim_df = pd.DataFrame(cosine_similarity(count_matrix))
 
@@ -98,7 +98,6 @@ cosine_sim_df = pd.DataFrame(cosine_similarity(count_matrix))
 
 
 ######################################################Interactive Components############################################
-#print( unique_ingredients )#[dict(label=ingredient, value=ingredient) for ingredient in unique_ingredients['ingredients']] )
 
 ing_options = [dict(label=ingredient, value=ingredient) for ingredient in unique_ingredients['ingredients']]
 
@@ -133,7 +132,8 @@ recipe_table = dash_table.DataTable(
 similar_table = dash_table.DataTable(
         id='datatable-similar',
         columns=[
-            {"name": 'Recipe', "id": 'recipe_name', "deletable": False, "selectable": True}
+            {"name": 'Score', "id": 'Score', "deletable": False, "selectable": True},
+            {"name": 'Recipe', "id": 'recipe_title', "deletable": False, "selectable": True},
 
         ],
         #data=df.to_dict('records'),
@@ -172,7 +172,8 @@ app.layout = html.Div([
             ], id='recipelist_box'),
             html.Div([
                 html.Label('Similar Recipes'),
-                similar_table
+                similar_table,
+                html.Div(id='similar_out')
 
             ], id='similar_box')
         ], className="is-half"),
@@ -220,8 +221,6 @@ def update_table(page_current, page_size, sort_by, filter_string):
     # Filter
     dff = ingredients_index.loc[ingredients_index['ingredients'].isin(filter_string),['recipe_name', 'recipe_id']]
     dff.drop_duplicates(inplace=True)
-    print(dff.head(3))
-
 
     return dff.iloc[
            page_current * page_size:(page_current + 1) * page_size
@@ -277,7 +276,23 @@ def getRecipeTitle(active_cell, data):
     if active_cell:
         row = active_cell['row']
         desc_data = get_recipe_from_index(recipe_data, data[row]["recipe_id"])
-        return html.H2(desc_data['recipe_title'])
+        return html.H3(desc_data['recipe_title'])
+    return 
+
+
+
+@app.callback(
+    Output('datatable-similar', 'data'),
+    Input('datatable-interactivity', 'active_cell'),
+    State('datatable-interactivity', 'data')
+)
+def getRecipeSimilar(active_cell, data):
+    if active_cell:
+        row = active_cell['row']
+        recipe_id = data[row]["recipe_id"]
+        desc_data = get_recipe_from_index(recipe_data, recipe_id)
+        similar_df = get_top_similar(cosine_sim_df, 5, recipe_id, recipe_data)
+        return similar_df.to_dict('records')
     return 
 
 
