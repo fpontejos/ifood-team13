@@ -19,7 +19,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 data_path = 'https://raw.githubusercontent.com/fpontejos/ifood-team13/main/data/food_recipes.csv'
 data_path2 = 'data/food_recipes.csv'
-recipe_data = pd.read_csv(data_path)
+recipe_data = pd.read_csv(data_path, nrows=1000)
 
 
 recipe_data.drop(columns=['url', 'record_health', 'vote_count', 'author'], inplace=True)
