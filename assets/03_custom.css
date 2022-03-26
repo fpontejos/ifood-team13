@@ -1,0 +1,67 @@
+html {
+    /*border: 2px solid red;*/
+    height: 100vh;
+    background: rgb(143,0,46);
+    background: linear-gradient(164deg, rgba(143,0,46,1) 3%, rgba(105,0,56,1) 28%, rgba(50,0,67,1) 75%);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url('/assets/ifood-bg.png');
+    overflow: auto;
+    /*
+
+    background: rgb(50,0,67);
+    background: linear-gradient(306deg, rgba(50,0,67,1) 0%, rgba(105,0,56,1) 35%, rgba(143,0,46,1) 100%);
+    */
+}
+
+body {
+    background-color: #f9f9f9dd;
+    max-width: 50em;
+    max-height:100%;
+    overflow: auto;
+}
+
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important;
+}
+
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner td, 
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner th {
+    text-align: left !important;
+    padding: .25em .75em !important;
+}
+
+#_dash-app-content {
+    overflow: auto;
+    height: 100%;
+    position: relative;
+}
+
+#recipe_description {
+    line-height: 1.2em;
+    font-size: 1em;
+    margin-bottom: 2em;
+}
+.is-whole {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+.is-half {
+    position: relative;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 45%;
+    overflow: auto;
+    padding: 1em;
+}
+
+#similar_box {
+    margin-top: 2em
+}
+
+#ingredients_out div div [type="checkbox"], [type="radio"] {
+    margin: 0 1em 0 0;
+}
