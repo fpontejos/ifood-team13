@@ -223,20 +223,17 @@ app.layout = html.Div([
 
     #prop options display
     html.Div([
-        html.Div([
-            html.Label('Cuisine Choice'),
-            dropdown_cuisine,
-        ], className='is-third'),
-        html.Div([
-            html.Label('Category Choice'),
-            dropdown_cat,
-        ], className='is-third'),
-        html.Div([
-            html.Label('Diet Choice'),
-            dropdown_diet,            
-        ], className='is-third')
-
-    ], className='is-whole'),
+        html.Label('Cuisine Choice'),
+        dropdown_cuisine,
+    ], className='is-third'),
+    html.Div([
+        html.Label('Category Choice'),
+        dropdown_cat,
+    ], className='is-third'),
+    html.Div([
+        html.Label('Diet Choice'),
+        dropdown_diet,            
+    ], className='is-third'),
 
 
 

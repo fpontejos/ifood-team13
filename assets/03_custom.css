@@ -58,7 +58,7 @@ body {
     padding: 1em;
 }
 
-.is-third {
+.is-thirdx {
     position: relative;
     flex: 1 0 auto;
     display: flex;
@@ -97,4 +97,10 @@ body {
 {
     margin-right: .25em ;
     margin-left: .5em;
+}
+
+.Select-menu,
+.Select-menu-outer {
+    z-index: 999999 !important;
+    height: 5em;
 }
