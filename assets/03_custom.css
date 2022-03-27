@@ -58,10 +58,43 @@ body {
     padding: 1em;
 }
 
+.is-third {
+    position: relative;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 32%;
+    overflow: auto;
+    padding: .5em;
+}
+
 #similar_box {
     margin-top: 2em
 }
 
 #ingredients_out div div [type="checkbox"], [type="radio"] {
     margin: 0 1em 0 0;
+}
+
+#prep_check,
+#course_check, 
+#cook_check {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#cook_check > label ,
+#prep_check > label ,
+#course_check > label 
+{
+    margin: 0 .5em 0 .25em;
+}
+
+#cook_check > label > input,
+#prep_check > label > input,
+#course_check > label > input
+{
+    margin-right: .25em ;
+    margin-left: .5em;
 }

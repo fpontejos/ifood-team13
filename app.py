@@ -19,7 +19,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 data_path = 'https://raw.githubusercontent.com/fpontejos/ifood-team13/main/data/food_recipes.csv'
 data_path2 = 'data/food_recipes.csv'
-recipe_data = pd.read_csv(data_path2, nrows=1000)
+recipe_data = pd.read_csv(data_path, nrows=1000)
 
 
 recipe_data.drop(columns=['url', 'record_health', 'vote_count', 'author'], inplace=True)
@@ -222,14 +222,23 @@ app.layout = html.Div([
     dropdown_ingredient,
 
     #prop options display
-    html.Label('Cuisine Choice'),
-    dropdown_cuisine,
+    html.Div([
+        html.Div([
+            html.Label('Cuisine Choice'),
+            dropdown_cuisine,
+        ], className='is-third'),
+        html.Div([
+            html.Label('Category Choice'),
+            dropdown_cat,
+        ], className='is-third'),
+        html.Div([
+            html.Label('Diet Choice'),
+            dropdown_diet,            
+        ], className='is-third')
 
-    html.Label('Category Choice'),
-    dropdown_cat,
+    ], className='is-whole'),
 
-    html.Label('Diet Choice'),
-    dropdown_diet,
+
 
     html.Label('Course Choice'),
     boxes_course,
@@ -280,14 +289,6 @@ app.layout = html.Div([
 
 
 ######################################################Callbacks#########################################################
-
-@app.callback(
-#    Output('dd-output-container', 'children'),
-    Output('datatable-interactivity', 'value'),
-    Input('ing_drop', 'value')
-)
-def update_output(value):
-    return value
 
 
 @app.callback(
