@@ -1,8 +1,8 @@
 import dash
-from dash import dash_table, html
+from dash import dash_table, html, dcc
 
-import dash_core_components as dcc
-import dash_html_components as html
+#import dash_core_components as dcc
+#import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import numpy as np
 import pandas as pd
@@ -19,7 +19,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 data_path = 'https://raw.githubusercontent.com/fpontejos/ifood-team13/main/data/food_recipes.csv'
 data_path2 = 'data/food_recipes.csv'
-recipe_data = pd.read_csv(data_path, nrows=1000)
+recipe_data = pd.read_csv(data_path2, nrows=1000)
 
 
 recipe_data.drop(columns=['url', 'record_health', 'vote_count', 'author'], inplace=True)
@@ -101,13 +101,70 @@ cosine_sim_df = pd.DataFrame(cosine_similarity(count_matrix))
 
 ing_options = [dict(label=ingredient, value=ingredient) for ingredient in unique_ingredients['ingredients']]
 
+#prop options
+cuisine_options = [dict(label=cuis, value=cuis) for cuis in pd.unique(recipe_data['cuisine'])]
+cat_options = [dict(label=cat, value=cat) for cat in pd.unique(recipe_data['category'])]
+diet_options = [dict(label=diet, value=diet) for diet in pd.unique(recipe_data['diet'])]
+course_options = [dict(label=cour, value=cour) for cour in pd.unique(recipe_data['course'])]
+
+gaps_str_prep = ['0-10','10-30','30-60','60-100','100-'+str(recipe_data['prep_time'].max())]
+gaps_str_cook = ['0-10','10-30','30-60','60-100','100-'+str(recipe_data['cook_time'].max())]
+
+prep_options = [dict(label=stri, value=stri) for stri in gaps_str_prep]
+cook_options = [dict(label=stri, value=stri) for stri in gaps_str_cook]
+##prop options over
+#
 dropdown_ingredient = dcc.Dropdown(
-        id='ing_drop',
-        options=ing_options,
-        multi=True
-    )
+       id='ing_drop',
+       options=ing_options,
+       multi=True
+   )
 
+##prop options UI
+dropdown_cuisine = dcc.Dropdown(
+       id='cuisine_drop',
+       options=cuisine_options,
+       multi=True
+   )
 
+dropdown_cat = dcc.Dropdown(
+       id='cat_drop',
+       options=cat_options,
+       multi=True
+   )
+
+dropdown_diet = dcc.Dropdown(
+       id='diet_drop',
+       options=diet_options,
+       multi=True
+   )
+
+boxes_course = dcc.Checklist(
+       id='course_check',
+       options=course_options
+   )
+
+slider_rating = dcc.Slider(
+       id='rating_slider',
+       min=0,
+       max=recipe_data['rating'].max(),
+       marks={str(i): '{}'.format(str(i)) for i in
+              [0,1,2,3,4,5]},
+       step=0.01
+   )
+
+boxes_prep = dcc.Checklist(
+       id='prep_check',
+       options=prep_options
+   )
+
+boxes_cook = dcc.Checklist(
+       id='cook_check',
+       options=cook_options
+   )
+##prop options UI over
+#
+#
 recipe_table = dash_table.DataTable(
         id='datatable-interactivity',
         columns=[
@@ -164,6 +221,29 @@ app.layout = html.Div([
     html.Label('Ingredients In My Pantry:'),
     dropdown_ingredient,
 
+    #prop options display
+    html.Label('Cuisine Choice'),
+    dropdown_cuisine,
+
+    html.Label('Category Choice'),
+    dropdown_cat,
+
+    html.Label('Diet Choice'),
+    dropdown_diet,
+
+    html.Label('Course Choice'),
+    boxes_course,
+
+    html.Label('Rating Slider'),
+    slider_rating,
+    
+    html.Label('Preparation Time Interval'),
+    boxes_prep,
+
+    html.Label('Cooking Time Interval'),
+    boxes_cook,
+    #prop options display over
+
     html.Div([
         html.Div([
             html.Div([
@@ -216,8 +296,15 @@ def update_output(value):
      Input('datatable-interactivity', 'page_size'),
      Input('datatable-interactivity', 'sort_by'),
      Input("ing_drop", "value"),
+     Input("cuisine_drop", "value"),
+     Input("cat_drop", "value"),
+     Input("diet_drop", "value"),
+     Input("course_check", "value"),
+     Input("rating_slider", "value"),
+     Input("prep_check", "value"),
+     Input('cook_check', 'value'),
      ])
-def update_table(page_current, page_size, sort_by, filter_string):
+def update_table(page_current, page_size, sort_by, filter_string, cuis,cat,diet,cour,rate,prep,cook):
     # Filter
     dff = ingredients_index.loc[ingredients_index['ingredients'].isin(filter_string),['recipe_name', 'recipe_id']]
     dff.drop_duplicates(inplace=True)
